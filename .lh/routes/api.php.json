@@ -1,0 +1,22 @@
+{
+    "sourceFile": "routes/api.php",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1657247976277,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1657248369942,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,7 @@\n <?php\n \n+use App\\Http\\Controllers\\AuthController;\n use Illuminate\\Http\\Request;\n use Illuminate\\Support\\Facades\\Route;\n \n /*\n"
+                }
+            ],
+            "date": 1657247976277,
+            "name": "Commit-0",
+            "content": "<?php\n\nuse Illuminate\\Http\\Request;\nuse Illuminate\\Support\\Facades\\Route;\n\n/*\n|--------------------------------------------------------------------------\n| API Routes\n|--------------------------------------------------------------------------\n|\n| Here is where you can register API routes for your application. These\n| routes are loaded by the RouteServiceProvider within a group which\n| is assigned the \"api\" middleware group. Enjoy building your API!\n|\n*/\n\nRoute::group([\n    'middleware' => 'api',\n    'prefix' => 'auth'\n\n], function ($router) {\n    Route::post('/login', [AuthController::class, 'login']);\n    Route::post('/register', [AuthController::class, 'register']);\n    Route::post('/logout', [AuthController::class, 'logout']);\n    Route::post('/refresh', [AuthController::class, 'refresh']);\n    Route::get('/user-profile', [AuthController::class, 'userProfile']);\n    Route::post('/change-pass', [AuthController::class, 'changePassWord']);    \n});\n"
+        }
+    ]
+}

@@ -1,0 +1,30 @@
+{
+    "sourceFile": "app/Http/Controllers/AuthController.php",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1657247738683,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1657247803041,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,11 +4,10 @@\n use Illuminate\\Http\\Request;\n \n use Illuminate\\Support\\Facades\\Auth;\n use App\\Models\\User;\n-use Validator;\n+use Illuminate\\Support\\Facades\\Validator;\n \n-\n class AuthController extends Controller\n {\n     /**\n      * Create a new AuthController instance.\n"
+                },
+                {
+                    "date": 1657248566693,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -50,9 +50,9 @@\n             'name' => 'required|string|between:2,100',\n             'email' => 'required|string|email|max:100|unique:users',\n             'password' => 'required|string|confirmed|min:6',\n         ]);\n-\n+        dd(1);\n         if($validator->fails()){\n             return response()->json($validator->errors()->toJson(), 400);\n         }\n \n"
+                },
+                {
+                    "date": 1657248585964,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -50,9 +50,9 @@\n             'name' => 'required|string|between:2,100',\n             'email' => 'required|string|email|max:100|unique:users',\n             'password' => 'required|string|confirmed|min:6',\n         ]);\n-        dd(1);\n+        \n         if($validator->fails()){\n             return response()->json($validator->errors()->toJson(), 400);\n         }\n \n"
+                }
+            ],
+            "date": 1657247738683,
+            "name": "Commit-0",
+            "content": "<?php\n\nnamespace App\\Http\\Controllers;\nuse Illuminate\\Http\\Request;\n\nuse Illuminate\\Support\\Facades\\Auth;\nuse App\\Models\\User;\nuse Validator;\n\n\nclass AuthController extends Controller\n{\n    /**\n     * Create a new AuthController instance.\n     *\n     * @return void\n     */\n    public function __construct() {\n        $this->middleware('auth:api', ['except' => ['login', 'register']]);\n    }\n\n    /**\n     * Get a JWT via given credentials.\n     *\n     * @return \\Illuminate\\Http\\JsonResponse\n     */\n    public function login(Request $request){\n    \t$validator = Validator::make($request->all(), [\n            'email' => 'required|email',\n            'password' => 'required|string|min:6',\n        ]);\n\n        if ($validator->fails()) {\n            return response()->json($validator->errors(), 422);\n        }\n\n        if (! $token = auth()->attempt($validator->validated())) {\n            return response()->json(['error' => 'Unauthorized'], 401);\n        }\n\n        return $this->createNewToken($token);\n    }\n\n    /**\n     * Register a User.\n     *\n     * @return \\Illuminate\\Http\\JsonResponse\n     */\n    public function register(Request $request) {\n        $validator = Validator::make($request->all(), [\n            'name' => 'required|string|between:2,100',\n            'email' => 'required|string|email|max:100|unique:users',\n            'password' => 'required|string|confirmed|min:6',\n        ]);\n\n        if($validator->fails()){\n            return response()->json($validator->errors()->toJson(), 400);\n        }\n\n        $user = User::create(array_merge(\n                    $validator->validated(),\n                    ['password' => bcrypt($request->password)]\n                ));\n\n        return response()->json([\n            'message' => 'User successfully registered',\n            'user' => $user\n        ], 201);\n    }\n\n\n    /**\n     * Log the user out (Invalidate the token).\n     *\n     * @return \\Illuminate\\Http\\JsonResponse\n     */\n    public function logout() {\n        auth()->logout();\n\n        return response()->json(['message' => 'User successfully signed out']);\n    }\n\n    /**\n     * Refresh a token.\n     *\n     * @return \\Illuminate\\Http\\JsonResponse\n     */\n    public function refresh() {\n        return $this->createNewToken(auth()->refresh());\n    }\n\n    /**\n     * Get the authenticated User.\n     *\n     * @return \\Illuminate\\Http\\JsonResponse\n     */\n    public function userProfile() {\n        return response()->json(auth()->user());\n    }\n\n    /**\n     * Get the token array structure.\n     *\n     * @param  string $token\n     *\n     * @return \\Illuminate\\Http\\JsonResponse\n     */\n    protected function createNewToken($token){\n        return response()->json([\n            'access_token' => $token,\n            'token_type' => 'bearer',\n            'expires_in' => auth()->factory()->getTTL() * 60,\n            'user' => auth()->user()\n        ]);\n    }\n\n    public function changePassWord(Request $request) {\n        $validator = Validator::make($request->all(), [\n            'old_password' => 'required|string|min:6',\n            'new_password' => 'required|string|confirmed|min:6',\n        ]);\n\n        if($validator->fails()){\n            return response()->json($validator->errors()->toJson(), 400);\n        }\n        $userId = auth()->user()->id;\n\n        $user = User::where('id', $userId)->update(\n                    ['password' => bcrypt($request->new_password)]\n                );\n\n        return response()->json([\n            'message' => 'User successfully changed password',\n            'user' => $user,\n        ], 201);\n    }\n}\n"
+        }
+    ]
+}
